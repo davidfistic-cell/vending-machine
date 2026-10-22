@@ -37,3 +37,15 @@ sonar-scanner -Dsonar.host.url=<your server> -Dsonar.token=<your token>
 | Code smells | `public/app.js` | `var` instead of `let`/`const`, unused variable `result` |
 | Accessibility | `public/index.html` | Missing `lang` attribute, `<img>` without `alt`, inputs without labels |
 | Maintainability | whole project | No tests, so coverage will be 0% |
+
+## Branch `feature/add-issues`
+
+Adds a second batch of planted issues:
+
+| File | Issues |
+|---|---|
+| `server/routes/reviews.js` | OS command injection (`exec`), open redirect, stored XSS HTML, division by zero (NaN average), `==` comparisons |
+| `server/routes/admin.js` | Hardcoded admin password, XXE-prone XML parsing (old `xml2js` 0.4.19), world-writable file (`chmod 777`), path traversal in backup, missing `return` after error response |
+| `server/services/payment.js` | Hardcoded payment API key and SMTP password, card number/CVV logged, TLS verification disabled, AES-ECB with static key, deprecated `createCipher`-style/`pseudoRandomBytes` APIs, `fs.writeFile` without callback, useless `catch`/rethrow, `=== NaN` comparison |
+| `server/services/inventory.js` | Duplicated function, deeply nested conditionals with 6 params, redundant boolean if/else, unreachable code after `return`, identical branch conditions, null dereference on missing product |
+| `public/wishlist.js` | Password stored in `localStorage`, `javascript:` URL, `document.write`, synchronous XHR over HTTP, `eval` on response, unchecked `postMessage` origin, duplicate `if` condition, `indexOf` of `-1` splice bug |
