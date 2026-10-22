@@ -6,6 +6,8 @@ const db = require('./db');
 const productRoutes = require('./routes/products');
 const authRoutes = require('./routes/auth');
 const orderRoutes = require('./routes/orders');
+const reviewRoutes = require('./routes/reviews');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +19,8 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', db: db.connect() });
