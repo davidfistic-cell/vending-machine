@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>The Vending Machine - Sneakers</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>The Vending Machine</h1>
+    <input type="text" id="search" placeholder="Search sneakers...">
+    <button id="search-btn">Search</button>
+    <a href="#" id="cart-link">Cart (<span id="cart-count">0</span>)</a>
+  </header>
+
+  <nav>
+    <img src="logo.png">
+    <button class="filter" data-category="">All</button>
+    <button class="filter" data-category="running">Running</button>
+    <button class="filter" data-category="lifestyle">Lifestyle</button>
+    <button class="filter" data-category="basketball">Basketball</button>
+    <button class="filter" data-category="trail">Trail</button>
+  </nav>
+
+  <main>
+    <div id="search-message"></div>
+    <section id="products"></section>
+  </main>
+
+  <aside id="cart">
+    <h2>Your cart</h2>
+    <ul id="cart-items"></ul>
+    <p>Total: <span id="cart-total">0.00</span> EUR</p>
+    <input type="text" id="coupon" placeholder="Coupon code">
+    <button id="checkout-btn">Checkout</button>
+    <div id="checkout-message"></div>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>

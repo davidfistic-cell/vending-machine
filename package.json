@@ -1,0 +1,13 @@
+{
+  "name": "the-vending-machine",
+  "version": "1.0.0",
+  "description": "Sneaker shop used as a SonarQube test project",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  }
+}
