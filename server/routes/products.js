@@ -1,5 +1,4 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
 const db = require('../db');
 const { products } = require('../data');
@@ -27,20 +26,38 @@ router.get('/search', (req, res) => {
 
 // Product image served from disk
 router.get('/image/:file', (req, res) => {
-  const filePath = path.join(__dirname, '../../images', req.params.file);
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
+  const imagesDir = path.join(__dirname, '../../images');
+  res.sendFile(req.params.file, { root: imagesDir }, (err) => {
+    if (err && !res.headersSent) {
       res.status(404).send('Not found');
-    } else {
-      res.send(data);
     }
   });
 });
 
+const COMPARATORS = {
+  '<': (a, b) => a < b,
+  '<=': (a, b) => a <= b,
+  '>': (a, b) => a > b,
+  '>=': (a, b) => a >= b,
+  '==': (a, b) => a == b,
+  '===': (a, b) => a === b,
+  '!=': (a, b) => a != b,
+  '!==': (a, b) => a !== b
+};
+
 // Custom price filter, e.g. ?rule=price<100
 router.get('/filter', (req, res) => {
-  const rule = req.query.rule;
-  const result = products.filter(price => eval('price.' + rule));
+  const rule = String(req.query.rule || '').replace(/\s/g, '');
+  const match = /^(\w+)(===|!==|==|!=|<=|>=|<|>)(-?\d+(?:\.\d+)?)$/.exec(rule);
+  if (!match) {
+    return res.status(400).json({ error: 'Invalid rule' });
+  }
+  const field = match[1];
+  const compare = COMPARATORS[match[2]];
+  const value = Number(match[3]);
+  const result = products.filter(product =>
+    Object.prototype.hasOwnProperty.call(product, field) && compare(product[field], value)
+  );
   res.json(result);
 });
 
