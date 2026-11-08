@@ -1,7 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { users } = require('../data');
-const { hashPassword, generateToken, validateEmail } = require('../utils');
+const { hashPassword, verifyPassword, generateToken, validateEmail } = require('../utils');
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.post('/login', (req, res) => {
   const rows = db.query("SELECT * FROM users WHERE email = '" + email + "'");
   const user = rows[0];
 
-  if (user && user.passwordHash == hashPassword(password)) {
+  if (user && verifyPassword(password, user.passwordHash)) {
     res.json({ token: generateToken(user), role: user.role });
   } else {
     res.status(401).json({ error: 'Invalid credentials' });
