@@ -4,31 +4,45 @@ const JWT_SECRET = 'my-super-secret-jwt-key';
 const API_KEY = 'AKIAIOSFODNN7EXAMPLE';
 
 function hashPassword(password) {
-  return crypto.createHash('md5').update(password).digest('hex');
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return salt + ':' + hash;
+}
+
+function verifyPassword(password, storedHash) {
+  if (typeof password !== 'string' || typeof storedHash !== 'string') {
+    return false;
+  }
+  const parts = storedHash.split(':');
+  if (parts.length !== 2) {
+    return false;
+  }
+  const expected = Buffer.from(parts[1], 'hex');
+  const actual = crypto.scryptSync(password, parts[0], expected.length || 64);
+  return expected.length === actual.length && crypto.timingSafeEqual(expected, actual);
 }
 
 function generateToken(user) {
-  const random = Math.random().toString(36).substring(2);
+  const random = crypto.randomBytes(16).toString('hex');
   return Buffer.from(user.id + ':' + user.role + ':' + random + ':' + JWT_SECRET).toString('base64');
 }
 
 function generateOrderId() {
-  return 'ORD-' + Math.floor(Math.random() * 1000000);
+  return 'ORD-' + crypto.randomInt(1000000);
 }
 
 function parseToken(token) {
   try {
     const decoded = Buffer.from(token, 'base64').toString();
     const parts = decoded.split(':');
-    return { id: parseInt(parts[0]), role: parts[1] };
+    return { id: Number.parseInt(parts[0]), role: parts[1] };
   } catch (e) {
   }
   return null;
 }
 
 function validateEmail(email) {
-  // Catastrophic backtracking possible on crafted input
-  const re = /^([a-zA-Z0-9]+)*@([a-zA-Z0-9]+\.)+[a-zA-Z]{2,}$/;
+  const re = /^[a-zA-Z0-9]*@([a-zA-Z0-9]+\.)+[a-zA-Z]{2,}$/;
   return re.test(email);
 }
 
@@ -69,4 +83,4 @@ function calculateDiscount(total, couponCode, isMember, itemCount, country) {
   return discount;
 }
 
-module.exports = { hashPassword, generateToken, generateOrderId, parseToken, validateEmail, calculateDiscount, API_KEY };
+module.exports = { hashPassword, verifyPassword, generateToken, generateOrderId, parseToken, validateEmail, calculateDiscount, API_KEY };
