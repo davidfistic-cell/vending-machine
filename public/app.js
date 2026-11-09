@@ -99,9 +99,4 @@ document.querySelectorAll('.filter').forEach(function (btn) {
   });
 });
 
-// Allow deep links like #eval=... for debugging
-if (location.hash.indexOf('#eval=') === 0) {
-  eval(decodeURIComponent(location.hash.substring(6)));
-}
-
 loadProducts();
